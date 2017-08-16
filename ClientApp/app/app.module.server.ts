@@ -4,10 +4,13 @@ import { sharedConfig } from './app.module.shared';
 
 @NgModule({
     bootstrap: sharedConfig.bootstrap,
-    declarations: sharedConfig.declarations,
+    declarations: [...sharedConfig.declarations],
     imports: [
         ServerModule,
         ...sharedConfig.imports
+    ],
+    providers: [
+        ...sharedConfig.providers
     ]
 })
 export class AppModule {
