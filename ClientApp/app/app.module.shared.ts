@@ -1,5 +1,3 @@
-
-
 import { ErrorHandler } from '@angular/core';
 import { AppErrorHandler } from './app.error-handler';
 import { NgModule } from '@angular/core';
@@ -18,7 +16,7 @@ import { VehicleListComponent } from './components/vehicle-list/vehicle-list.com
 import { PaginationComponent } from './components/shared/pagination.component';
 
 import { VehicleService } from './services/vehicle.service';
-
+import { PhotoService } from './services/photo.service';
 
 
 export const sharedConfig: NgModule = {
@@ -51,6 +49,7 @@ export const sharedConfig: NgModule = {
     ],
     providers: [
         { provide: ErrorHandler, useClass: AppErrorHandler},
-        VehicleService
+        VehicleService,
+        PhotoService
     ]
 };

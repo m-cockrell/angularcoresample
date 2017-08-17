@@ -7,6 +7,7 @@ namespace vega.Core.Models
         public int Id { get; set; }
         [Required]
         [StringLength(255)]
-        public string FileName {get; set;}
+        public string FileName { get; set; }
+        public int VehicleId { get; set; }
     }
 }
