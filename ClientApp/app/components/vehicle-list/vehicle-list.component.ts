@@ -8,18 +8,63 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./vehicle-list.component.css']
 })
 export class VehicleListComponent implements OnInit {
+  private readonly PAGE_SIZE = 3;
 
-  vehicles: Vehicle[];
+  queryResult: any = {};
   makes: KeyValuePair[];
-  filter: any = {};
+  query: any = {
+    pageSize: this.PAGE_SIZE
+  };
+  columns = [
+    { title: 'Id' },
+    { title: 'Contact Name', key: 'contactName', isSortable: true },
+    { title: 'Make', key: 'make', isSortable: true },
+    { title: 'Model', key: 'model', isSortable: true },
+    { },
+  ];
 
   constructor(private vehicleService: VehicleService) { }
 
   ngOnInit() {
     this.vehicleService.getMakes()
       .subscribe(makes => this.makes = makes);
-    this.vehicleService.getVehicles()
-      .subscribe(vehicles => this.vehicles = vehicles);
+    
+    this.populateVehicles();
+  }
+
+  private populateVehicles() {
+    this.vehicleService.getVehicles(this.query)
+    .subscribe(vehicles => this.queryResult = vehicles);
+  }
+
+  onFilterChange() {
+    this.query.page = 1;
+    this.populateVehicles();
+  }
+
+  resetFilter() {
+    this.query = {
+      page: 1,
+      pageSize: this.PAGE_SIZE
+    };
+    this.populateVehicles();
+  }
+
+  sortBy(columnName) {
+    if (this.query.sortBy === columnName) {
+      this.query.isSortAscending = !this.query.isSortAscending;
+    }
+    else {
+      this.query.sortBy = columnName;
+      this.query.isSortAscending = true;
+    }
+
+    this.populateVehicles();
+  }
+
+  onPageChange(page) {
+    this.query.page = page;
+    this.populateVehicles();
   }
 
 }
