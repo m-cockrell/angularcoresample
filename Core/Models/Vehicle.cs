@@ -13,6 +13,7 @@ namespace vega.Core.Models
         public int ModelId { get; set; }
         public Model Model { get; set; }
         public ICollection<VehicleFeature> Features {get; set;}
+        public ICollection<Photo> Photos {get; set;}
         public bool IsRegistered { get; set; }
         [Required]
         [StringLength(255)]
@@ -28,6 +29,7 @@ namespace vega.Core.Models
          public Vehicle()
         {
             Features = new Collection<VehicleFeature>();    
+            Photos = new Collection<Photo>();
         }
         
     }
