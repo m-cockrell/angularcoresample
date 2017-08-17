@@ -10,13 +10,13 @@ export class VehicleService {
 
   getMakes() {
     // standard api call mapped to an object from json response
-    return this.http.get(this.originUrl + '/api/makes')
+    return this.http.get(this.originUrl + '/api/vehicles/makes')
       .map(res => res.json());
   }
   
   getFeatures() {
     // standard api call mapped to an object from json response
-    return this.http.get(this.originUrl + '/api/features')
+    return this.http.get(this.originUrl + '/api/vehicles/features')
       .map(res => res.json());
   }
 
