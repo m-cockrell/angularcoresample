@@ -9,6 +9,7 @@ using vega.Persistence;
 
 namespace vega.Controllers
 {
+    [Route("/api/vehicles")]
     public class VehiclesController : Controller
     {
         private readonly VegaDbContext context;
@@ -18,18 +19,22 @@ namespace vega.Controllers
             this.mapper = mapper;
             this.context = context;
         }
-        [HttpGet("/api/vehicles/features")]
-        public async Task<IEnumerable<FeatureResource>> GetFeatures()
+        
+        [HttpPost]
+        public async Task<IActionResult> CreateVehicle([FromBody] VehicleResource vehicleResource) 
         {
-            var features = await context.Features.ToListAsync();
-            return mapper.Map<List<Feature>, List<FeatureResource>>(features);
-        }
+            // map the incoming vehicle resource object to a complex 
+            // vehicle object using mapper settings defined elsewhere
+            var vehicle = mapper.Map<VehicleResource, Vehicle>(vehicleResource);
 
-        [HttpGet("/api/vehicles/makes")]
-        public async Task<IEnumerable<MakeResource>> GetMakes()
-        {
-            var makes = await context.Makes.Include(m => m.Models).ToListAsync();
-            return mapper.Map<List<Make>, List<MakeResource>>(makes);
+            // add the vehicle, if we cared we could do some validations first
+            context.Vehicles.Add(vehicle);
+            await context.SaveChangesAsync();
+
+            var result = mapper.Map<Vehicle, VehicleResource>(vehicle);
+
+            
+            return Ok(result);
         }
     }
 }
