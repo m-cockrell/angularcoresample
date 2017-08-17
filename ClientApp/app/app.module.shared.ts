@@ -1,6 +1,9 @@
+import { ErrorHandler } from '@angular/core';
+import { AppErrorHandler } from './app.error-handler';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { ToastyModule } from 'ng2-toasty';
 
 import { AppComponent } from './components/app/app.component'
 import { NavMenuComponent } from './components/navmenu/navmenu.component';
@@ -10,6 +13,7 @@ import { CounterComponent } from './components/counter/counter.component';
 import { VehicleFormComponent } from './components/vehicle-form/vehicle-form.component';
 
 import { VehicleService } from './services/vehicle.service';
+
 
 
 export const sharedConfig: NgModule = {
@@ -24,9 +28,11 @@ export const sharedConfig: NgModule = {
     ],
     imports: [
         FormsModule,
+        ToastyModule.forRoot(),
         RouterModule.forRoot([
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'vehicles/new', component: VehicleFormComponent },
+            { path: 'vehicles/:id', component: VehicleFormComponent },
             { path: 'home', component: HomeComponent },
             { path: 'counter', component: CounterComponent },
             { path: 'fetch-data', component: FetchDataComponent },
@@ -34,6 +40,7 @@ export const sharedConfig: NgModule = {
         ])
     ],
     providers: [
+        { provide: ErrorHandler, useClass: AppErrorHandler},
         VehicleService
     ]
 };

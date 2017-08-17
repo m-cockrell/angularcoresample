@@ -30,7 +30,11 @@ module.exports = (env) => {
                 'es6-shim',
                 'es6-promise',
                 'event-source-polyfill',
+                'ng2-toasty',
+                'ng2-toasty/bundles/style-bootstrap.css',
                 'jquery',
+                'raven-js',
+                'underscore',
                 'zone.js',
             ]
         },
