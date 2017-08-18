@@ -8,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 
 export class AdminComponent implements OnInit {
+  // create dummy data so that we can show something in the admin panel
   data = {
     labels: ['BMW', 'Audi', 'Mazda'],
     datasets: [
