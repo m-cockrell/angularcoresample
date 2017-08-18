@@ -62,6 +62,14 @@ namespace WebApplicationBasic
 
             app.UseStaticFiles();
 
+            // set up api options for our auth0 implementation for authentication
+            var options = new JwtBearerOptions
+            {
+                Audience = "https://api.mcockrelltests.com",
+                Authority = "https://mcockrell.auth0.com/"
+            };
+            app.UseJwtBearerAuthentication(options);
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

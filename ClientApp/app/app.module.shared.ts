@@ -1,3 +1,4 @@
+
 import { BrowserXhr } from '@angular/http';
 import { BrowserXhrWithProgress, ProgressService } from './services/progress.service';
 import { ErrorHandler } from '@angular/core';
@@ -15,10 +16,12 @@ import { CounterComponent } from './components/counter/counter.component';
 import { VehicleFormComponent } from './components/vehicle-form/vehicle-form.component';
 import { ViewVehicleComponent } from './components/view-vehicle/view-vehicle.component';
 import { VehicleListComponent } from './components/vehicle-list/vehicle-list.component';
+import { AdminComponent } from './components/admin/admin.component';
 import { PaginationComponent } from './components/shared/pagination.component';
 
 import { VehicleService } from './services/vehicle.service';
 import { PhotoService } from './services/photo.service';
+import { AuthService } from './services/auth.service';
 
 
 export const sharedConfig: NgModule = {
@@ -32,6 +35,7 @@ export const sharedConfig: NgModule = {
         ViewVehicleComponent,
         VehicleListComponent,
         PaginationComponent,
+        AdminComponent,
         HomeComponent
     ],
     imports: [
@@ -43,6 +47,7 @@ export const sharedConfig: NgModule = {
             { path: 'vehicles/edit/:id', component: VehicleFormComponent },
             { path: 'vehicles/:id', component: ViewVehicleComponent },
             { path: 'vehicles', component: VehicleListComponent },
+            { path: 'admin', component: AdminComponent },
             { path: 'home', component: HomeComponent },
             { path: 'counter', component: CounterComponent },
             { path: 'fetch-data', component: FetchDataComponent },
@@ -54,6 +59,7 @@ export const sharedConfig: NgModule = {
         { provide: BrowserXhr, useClass: BrowserXhrWithProgress},
         VehicleService,
         PhotoService,
-        ProgressService
+        ProgressService,
+        AuthService
     ]
 };
