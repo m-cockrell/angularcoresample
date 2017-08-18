@@ -1,91 +1,70 @@
+import { JwtHelper } from 'angular2-jwt';
+// app/auth.service.ts
+
+import { Injectable }      from '@angular/core';
 import { tokenNotExpired } from 'angular2-jwt';
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import 'rxjs/add/operator/filter';
-import * as auth0 from 'auth0-js';
+
+// Avoid name not found warnings
+import Auth0Lock from 'auth0-lock';
 
 @Injectable()
-export class AuthService {
-
+export class Auth {
   profile: any;
-  private roles: string[] = [];
+  private roles: string[] = []; 
 
-  auth0 = new auth0.WebAuth({
-    clientID: 'CTWpbfyqrkL7Xpn2ZeWazH3Z0cyw3Ccd',
-    domain: 'mcockrell.auth0.com',
-    responseType: 'token id_token',
-    audience: 'https://api.mcockrelltests.com',
-    redirectUri: 'http://localhost:5000/vehicles',      
-    scope: 'openid email profile',
-    additionalSignUpFields: [
-      {
-        name: "name",
-        placeholder: "Name"
-      }
-    ]
-  });
+  // Configure Auth0
+  lock = new Auth0Lock('CTWpbfyqrkL7Xpn2ZeWazH3Z0cyw3Ccd', 'mcockrell.auth0.com', {});
 
-  constructor(public router: Router) {
+  constructor() {    
+    this.readUserFromLocalStorage();
+
+    this.lock.on("authenticated", (authResult) => this.onUserAuthenticated(authResult));
+  }
+
+  private onUserAuthenticated(authResult) {
+    localStorage.setItem('token', authResult.accessToken);
+
+    this.lock.getUserInfo(authResult.accessToken, (error, profile) => {
+      if (error)
+        throw error;
+
+      localStorage.setItem('profile', JSON.stringify(profile));
+
+      this.readUserFromLocalStorage();
+    });
+  }
+
+  private readUserFromLocalStorage() {
     this.profile = JSON.parse(localStorage.getItem('profile'));
+
+    var token = localStorage.getItem('token');
+    if (token) {
+      var jwtHelper = new JwtHelper();
+      var decodedToken = jwtHelper.decodeToken(token);
+      this.roles = decodedToken['https://example.com/roles'] || [];
+    }
   }
 
   public isInRole(roleName) {
     return this.roles.indexOf(roleName) > -1;
   }
 
-  public login(): void {
-    this.auth0.authorize();
+  public login() {
+    // Call the show method to display the widget.
+    this.lock.show();
   }
 
-  public handleAuthentication(): void {
-    this.auth0.parseHash((err, authResult) => {
-      if (authResult && authResult.accessToken && authResult.idToken) {
-        window.location.hash = '';
-        this.setSession(authResult);
-        this.auth0.client.userInfo(authResult.accessToken, (error, profile) => {
-          if (error)
-            throw error;
-          
-          this.roles = profile["https://example.com/roles"];
-
-          localStorage.setItem('profile', JSON.stringify(profile));
-          this.profile = profile;
-        });
-
-        this.router.navigate(['/vehicles/']);
-      } else if (err) {
-        this.router.navigate(['/error']);
-        console.log(err);
-      }
-    });
+  public authenticated() {
+    // Check if there's an unexpired JWT
+    // This searches for an item in localStorage with key == 'token'
+    return tokenNotExpired('token');
   }
 
-  private setSession(authResult): void {
-    // Set the time that the access token will expire at
-    const expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
-    localStorage.setItem('access_token', authResult.accessToken);
-    localStorage.setItem('id_token', authResult.idToken);
-    localStorage.setItem('expires_at', expiresAt);
-  }
-
-  public logout(): void {
-    // Remove tokens and expiry time from localStorage
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('id_token');
-    localStorage.removeItem('expires_at');
+  public logout() {
+    // Remove token from localStorage
+    localStorage.removeItem('token');
     localStorage.removeItem('profile');
-
     this.profile = null;
     this.roles = [];
-    // Go back to the home route
-    this.router.navigate(['/vehicles/']);
   }
-
-  public isAuthenticated(): boolean {
-    // Check whether the current time is past the
-    // access token's expiry time
-    const expiresAt = JSON.parse(localStorage.getItem('expires_at'));
-    return new Date().getTime() < expiresAt;
-  }
-
 }
